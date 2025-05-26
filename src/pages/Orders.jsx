@@ -6,7 +6,8 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [showHistory, setShowHistory] = useState(false); // false => hozirgi, true => tarix
 
-  useEffect(() => {
+  // Buyurtmalarni olish funksiyasi
+  const fetchOrders = () => {
     axios.get('http://109.172.37.41:4000/order')
       .then(response => {
         setOrders(response.data);
@@ -16,6 +17,16 @@ const Orders = () => {
         console.error('Buyurtmalarni olishda xatolik:', error);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchOrders(); // Komponent yuklanganda birinchi marta chaqiriladi
+
+    const interval = setInterval(() => {
+      fetchOrders(); // Har 5 soniyada yangilanadi
+    }, 50000);
+
+    return () => clearInterval(interval); // Komponent o'chirilganda intervalni tozalash
   }, []);
 
   const formatDateTime = (dateString) => {
@@ -190,3 +201,4 @@ const styles = {
 };
 
 export default Orders;
+
