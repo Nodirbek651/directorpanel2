@@ -4,6 +4,7 @@ import axios from 'axios';
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showHistory, setShowHistory] = useState(false); // false => hozirgi, true => tarix
 
   useEffect(() => {
     axios.get('http://109.172.37.41:4000/order')
@@ -17,17 +18,13 @@ const Orders = () => {
       });
   }, []);
 
-  // Sana va vaqtni formatlash: yyyy.mm.dd HH:mm
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
-
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
-
     return `${year}.${month}.${day} ${hours}:${minutes}`;
   };
 
@@ -38,18 +35,16 @@ const Orders = () => {
       borderRadius: '6px',
       fontWeight: 'bold',
       display: 'inline-block',
-      letterSpacing: '0.2px',
       minWidth: '120px',
       textAlign: 'center',
     };
-
     switch (status?.toLowerCase()) {
       case "pending":
         return <span style={{ ...commonStyle, backgroundColor: 'red' }}>Yangi buyurtma</span>;
       case "cooking":
         return <span style={{ ...commonStyle, backgroundColor: 'orange' }}>Tayyorlanmoqda</span>;
       case "ready":
-        return <span style={{ ...commonStyle, backgroundColor: 'green' }}>Buyurtma Tayyor</span>;
+        return <span style={{ ...commonStyle, backgroundColor: 'green' }}>Buyurtma tayyor</span>;
       case "cancelled":
         return <span style={{ ...commonStyle, backgroundColor: '#555' }}>Bekor qilindi</span>;
       case "completed":
@@ -59,13 +54,44 @@ const Orders = () => {
     }
   };
 
+  const filteredOrders = showHistory
+    ? orders.filter(order =>
+        ['completed', 'cancelled'].includes(order.status?.toLowerCase())
+      )
+    : orders.filter(order =>
+        ['pending', 'cooking', 'ready'].includes(order.status?.toLowerCase())
+      );
+
   if (loading) {
     return <div style={styles.loading}>Yuklanmoqda...</div>;
   }
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.heading}>Buyurtmalar ro'yxati</h2>
+      <h2 style={styles.heading}>Buyurtmalar</h2>
+
+      <div style={styles.buttonGroup}>
+        <button
+          style={{
+            ...styles.toggleButton,
+            backgroundColor: !showHistory ? '#007bff' : '#e0e0e0',
+            color: !showHistory ? '#fff' : '#333',
+          }}
+          onClick={() => setShowHistory(false)}
+        >
+          Hozirgi buyurtmalar
+        </button>
+        <button
+          style={{
+            ...styles.toggleButton,
+            backgroundColor: showHistory ? '#007bff' : '#e0e0e0',
+            color: showHistory ? '#fff' : '#333',
+          }}
+          onClick={() => setShowHistory(true)}
+        >
+          Buyurtma tarixi
+        </button>
+      </div>
 
       <div style={styles.tableWrapper}>
         <table style={styles.table}>
@@ -82,7 +108,7 @@ const Orders = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order, index) => (
+            {filteredOrders.map((order, index) => (
               <tr key={order._id || index}>
                 <td style={styles.td}>{index + 1}</td>
                 <td style={styles.td}>{order.tableNumber || 'Nomaʼlum'}</td>
@@ -92,7 +118,6 @@ const Orders = () => {
                 <td style={styles.td}>{order.totalPrice} so'm</td>
                 <td style={styles.td}>{Math.round(order.totalPrice * 0.04)} so'm</td>
                 <td style={styles.td}>{Math.round(order.totalPrice * 1.04)} so'm</td>
-                {/* Vaqt ustuni uchun maxsus stil qo‘lladik */}
                 <td style={styles.timeTd}>{formatDateTime(order.createdAt)}</td>
                 <td style={styles.td}>{getStatusBadge(order.status)}</td>
               </tr>
@@ -119,6 +144,19 @@ const styles = {
     marginTop: '40px',
     fontSize: '18px',
   },
+  buttonGroup: {
+    marginBottom: '16px',
+    display: 'flex',
+    gap: '12px',
+  },
+  toggleButton: {
+    padding: '10px 20px',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+  },
   tableWrapper: {
     overflowX: 'auto',
     backgroundColor: '#fff',
@@ -142,13 +180,12 @@ const styles = {
     borderBottom: '1px solid #eee',
     wordBreak: 'break-word',
   },
-  // Vaqt ustuni uchun kenglik va matnni bo‘linmasligi uchun stil
   timeTd: {
     padding: '12px',
     borderBottom: '1px solid #eee',
     wordBreak: 'break-word',
-    width: '150px',        // kenglikni xohlagancha oshiring
-    whiteSpace: 'nowrap',  // vaqtni qator bo‘lib chiqmasligi uchun
+    width: '150px',
+    whiteSpace: 'nowrap',
   },
 };
 
