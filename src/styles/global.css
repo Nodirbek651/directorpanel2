@@ -1,0 +1,68 @@
+/* src/styles/global.css */
+@media (max-width: 768px) {
+    /* Mobilda sidebar va hamburger */
+    .hamburger {
+      display: block; /* Har doim ko'rinadi */
+    }
+  
+    .buttons {
+      display: none; /* Desktopdagi tugmalarni yashirish */
+    }
+  
+    .buttonsMobile {
+      display: flex;
+      flex-direction: column; /* Mobilda tugmalarni vertikal qo'yish */
+      gap: 10px;
+    }
+  
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      transition: transform 0.3s ease-in-out;
+      width: 250px;
+      background-color: #444;
+      padding: 20px;
+      z-index: 10;
+    }
+  
+    .sidebar.open {
+      transform: translateX(250px); /* Sidebarni ochish uchun */
+    }
+  
+    .sidebarList {
+      list-style: none;
+      padding: 0;
+    }
+  
+    .link {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px 0;
+      border-bottom: 1px solid #555;
+    }
+  
+    .backButton {
+      background-color: #444;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 20px; /* Back tugmasi va list orasini ajratish */
+      border-radius: 5px;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    /* Desktop uchun Sign In va Register tugmalari ko‘rinadi */
+    .buttons {
+      display: flex;
+    }
+  
+    /* Mobilda hamburger iconini yashirish */
+    .hamburger {
+      display: block;
+    }
+  }
+  
