@@ -4,9 +4,10 @@ import axios from 'axios';
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showHistory, setShowHistory] = useState(false); // false => hozirgi, true => tarix
+  const [showHistory, setShowHistory] = useState(() => {
+    return localStorage.getItem('showHistory') === 'true';
+  });
 
-  // Buyurtmalarni olish funksiyasi
   const fetchOrders = () => {
     axios.get('http://109.172.37.41:4000/order')
       .then(response => {
@@ -20,14 +21,18 @@ const Orders = () => {
   };
 
   useEffect(() => {
-    fetchOrders(); // Komponent yuklanganda birinchi marta chaqiriladi
-
+    fetchOrders();
     const interval = setInterval(() => {
-      fetchOrders(); // Har 5 soniyada yangilanadi
+      fetchOrders();
     }, 50000);
-
-    return () => clearInterval(interval); // Komponent o'chirilganda intervalni tozalash
+    return () => clearInterval(interval);
   }, []);
+
+
+  const handleToggle = (value) => {
+    setShowHistory(value);
+    localStorage.setItem('showHistory', value);
+  };
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -60,6 +65,8 @@ const Orders = () => {
         return <span style={{ ...commonStyle, backgroundColor: '#555' }}>Bekor qilindi</span>;
       case "completed":
         return <span style={{ ...commonStyle, backgroundColor: '#228B22' }}>Bajarildi</span>;
+      case "archive":
+        return <span style={{ ...commonStyle, backgroundColor: 'blue' }}>Tugallangan</span>;
       default:
         return <span style={{ ...commonStyle, backgroundColor: 'gray' }}>Nomaʼlum</span>;
     }
@@ -67,7 +74,7 @@ const Orders = () => {
 
   const filteredOrders = showHistory
     ? orders.filter(order =>
-        ['completed', 'cancelled'].includes(order.status?.toLowerCase())
+        ['completed', 'cancelled', 'archive'].includes(order.status?.toLowerCase())
       )
     : orders.filter(order =>
         ['pending', 'cooking', 'ready'].includes(order.status?.toLowerCase())
@@ -88,7 +95,7 @@ const Orders = () => {
             backgroundColor: !showHistory ? '#007bff' : '#e0e0e0',
             color: !showHistory ? '#fff' : '#333',
           }}
-          onClick={() => setShowHistory(false)}
+          onClick={() => handleToggle(false)}
         >
           Hozirgi buyurtmalar
         </button>
@@ -98,7 +105,7 @@ const Orders = () => {
             backgroundColor: showHistory ? '#007bff' : '#e0e0e0',
             color: showHistory ? '#fff' : '#333',
           }}
-          onClick={() => setShowHistory(true)}
+          onClick={() => handleToggle(true)}
         >
           Buyurtma tarixi
         </button>
