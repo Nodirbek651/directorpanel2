@@ -18,8 +18,8 @@ const Finance = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ordersRes = await axios.get('http://109.172.37.41:4000/order');
-        const expensesRes = await axios.get('http://109.172.37.41:4000/order');
+        const ordersRes = await axios.get('https://suddocs.uz/order');
+        const expensesRes = await axios.get('https://suddocs.uz/order');
 
         const orders = ordersRes.data;
         const expenses = expensesRes.data;
