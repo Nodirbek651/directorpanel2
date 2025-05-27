@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const initialFinancialData = {
   revenue: 0,
@@ -13,6 +14,68 @@ const initialFinancialData = {
 
 const Finance = () => {
   const [data, setData] = useState(initialFinancialData);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const ordersRes = await axios.get('http://109.172.37.41:4000/order');
+        const expensesRes = await axios.get('http://109.172.37.41:4000/order');
+
+        const orders = ordersRes.data;
+        const expenses = expensesRes.data;
+
+       
+        const revenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+
+        
+        const expenseCategories = {
+          productCost: 0,
+          laborCost: 0,
+          utilityCost: 0,
+          otherCost: 0,
+        };
+
+        expenses.forEach((item) => {
+          switch (item.category) {
+            case 'Mahsulot':
+              expenseCategories.productCost += item.amount;
+              break;
+            case 'Xodim':
+              expenseCategories.laborCost += item.amount;
+              break;
+            case 'Kommunal':
+              expenseCategories.utilityCost += item.amount;
+              break;
+            case 'Boshqa':
+              expenseCategories.otherCost += item.amount;
+              break;
+            default:
+              break;
+          }
+        });
+
+       
+        const totalExpense =
+          expenseCategories.productCost +
+          expenseCategories.laborCost +
+          expenseCategories.utilityCost +
+          expenseCategories.otherCost;
+
+        const profit = revenue - totalExpense;
+
+        
+        setData({
+          revenue,
+          expenses: expenseCategories,
+          profit,
+        });
+      } catch (err) {
+        console.error('Maʼlumotlarni olishda xatolik:', err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div style={{ padding: '20px' }}>
