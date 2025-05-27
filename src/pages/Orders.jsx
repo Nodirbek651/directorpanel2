@@ -9,7 +9,7 @@ const Orders = () => {
   });
 
   const fetchOrders = () => {
-    axios.get('http://109.172.37.41:4000/order')
+    axios.get('https://suddocs.uz/order')
       .then(response => {
         setOrders(response.data);
         setLoading(false);
