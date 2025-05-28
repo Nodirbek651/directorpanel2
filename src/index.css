@@ -26,11 +26,16 @@ button:hover {
 }
 
 h2 {
-  color: #333;
+  color: #e9e0e0;
 }
 
 h3 {
   margin-top: 20px;
   color: #555;
+}
+
+body{
+  margin-left: 0px;
+  margin: 0;
 }
 
