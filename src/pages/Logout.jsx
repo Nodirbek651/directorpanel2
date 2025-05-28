@@ -2,33 +2,20 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Logout = () => {
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
 
-
-  const handleLogout = () => {
-   
-    const confirmLogout = window.confirm("Siz chiqmoqchimisiz?");
-    if (confirmLogout) {
-     
-      setIsLoggingOut(true);
-      
-     
-      localStorage.clear();
-      
-    
-      setTimeout(() => {
-        navigate('/login');
-      }, 1000);
-    }
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('user');
+    navigate('/login');
   };
-
   return (
     <div style={styles.container}>
       <h2>Chiqish</h2>
       <p style={styles.message}>Siz haqiqatan ham tizimdan chiqmoqchimisiz?</p>
-      <button onClick={handleLogout} style={styles.logoutButton}>
-        {isLoggingOut ? 'Chiqilyapti...' : 'Chiqish'}
+      <button onClick={logout} style={styles.logoutButton}>
+       Chiqish
       </button>
     </div>
   );

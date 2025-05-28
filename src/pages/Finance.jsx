@@ -10,6 +10,7 @@ const initialFinancialData = {
     otherCost: 0,
   },
   profit: 0,
+
 };
 
 const Finance = () => {
@@ -98,7 +99,7 @@ const Finance = () => {
       </div>
 
       <div style={{ padding: '10px', backgroundColor: '#ffe6e6', borderRadius: '8px', marginBottom: '20px' }}>
-        <h3>Oylik Foyda / Zarar</h3>
+        <h3>Oylik Foyda</h3>
         <p style={{ color: data.profit >= 0 ? 'green' : 'red' }}>
           {data.profit.toLocaleString()} so‘m
         </p>

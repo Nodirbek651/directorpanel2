@@ -208,4 +208,3 @@ const styles = {
 };
 
 export default Orders;
-

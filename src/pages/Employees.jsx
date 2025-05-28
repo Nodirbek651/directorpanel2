@@ -55,7 +55,7 @@ const Employees = () => {
         }}>
           <thead style={{ backgroundColor: '#f5f5f5' }}>
             <tr>
-              <th style={thStyle}>#</th>
+              <th style={thStyle}>ID</th>
               <th style={thStyle}>Ism</th>
               <th style={thStyle}>Lavozimi</th>
               <th style={thStyle}>Telefon raqami</th>

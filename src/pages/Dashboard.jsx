@@ -161,4 +161,3 @@ const styles = {
 };
 
 export default WeeklyMonthlyStats;
-
